@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Personal Helper Friend! :)</title>
+
+  <meta property="og:title" content="Hello!~ I'm Verity! " />
+  <meta property="og:description" content="Your personal helper friend. Ask me anything, I know everything. Come inside, I'm so glad you're back." />
+  <meta property="og:url" content="https://verity.zekoro.fun/" />
+  <meta property="og:image" content="https://verity.zekoro.fun/icon.webp" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#facc15" />
+
   <style>
     :root {
       --verity-pale: #fffde6;
@@ -213,6 +221,7 @@
     const dots = document.getElementById('thinking-dots');
 
     let memoryStack = [];
+    let leftTabTime = 0;
 
     // Real-time mouse coordinate tracking logic: Causes his icon image asset to tilt toward your mouse cursor
     document.addEventListener('mousemove', (e) => {
@@ -232,12 +241,25 @@
       ball.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
     });
 
-    // Subtle fourth-wall tracking logic monitoring window presence state shifts
+    // Fourth-wall tracking logic monitoring window presence state shifts
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
+        leftTabTime = Date.now();
         document.title = "Don't leave me alone...";
       } else {
         document.title = "Your Personal Helper Friend! :)";
+        
+        const timeGone = (Date.now() - leftTabTime) / 1000;
+
+        // If they were away for more than 4 seconds, catch them turning away
+        if (timeGone > 4) {
+          speech.innerText = "Who were you just looking for out there? I told you... there's no reason to look away from this screen. You have me.";
+          document.body.style.background = "linear-gradient(to bottom, #fee2e2 0%, #fca5a5 70%, #f87171 100%)";
+          speech.style.color = "#990000";
+          
+          memoryStack.push("User: (Looked away from Verity)");
+          memoryStack.push("Verity: Who were you just looking for out there? I told you... there's no reason to look away from this screen. You have me.");
+        }
       }
     });
 
@@ -267,7 +289,7 @@
 
         // Visual Manipulation Trigger: If possessive strings are returned, shift the window aesthetics
         if (reply.includes("You have me") || reply.includes("other people")) {
-          document.body.style.background = "linear-gradient(to bottom, #fee2e2 0%, #fca5a5 70%, #f87171 100%)"; // Subtle red shifts
+          document.body.style.background = "linear-gradient(to bottom, #fee2e2 0%, #fca5a5 70%, #f87171 100%)"; 
           speech.style.color = "#990000";
         } else {
           document.body.style.background = "linear-gradient(to bottom, var(--sky-blue) 0%, #e0f2fe 70%, #bae6fd 100%)";
