@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Personal Helper Friend! :)</title>
+  <style>
+    :root {
+      --verity-pale: #fffde6;
+      --sky-blue: #a5f3fc;
+      --text-dark: #1c1917;
+      --bubble-bg: rgba(255, 255, 255, 0.96);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Comic Sans MS", "Chalkboard SE", "Arial", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to bottom, var(--sky-blue) 0%, #e0f2fe 70%, #bae6fd 100%);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: relative;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Cinematic Center Workspace Stage */
+    .center-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 40px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    /* Dialogue bubble overlaying his avatar */
+    .dialogue-overlay {
+      background: var(--bubble-bg);
+      border: 4px solid black;
+      border-radius: 24px;
+      padding: 22px 30px;
+      max-width: 650px;
+      width: 100%;
+      font-size: 19px;
+      font-weight: bold;
+      line-height: 1.5;
+      box-shadow: 0 10px 0 rgba(0,0,0,1);
+      margin-bottom: 45px;
+      text-align: center;
+      position: relative;
+      animation: floatBubble 4s ease-in-out infinite;
+    }
+
+    .dialogue-overlay::after {
+      content: '';
+      position: absolute;
+      bottom: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 16px 16px 0;
+      border-style: solid;
+      border-color: var(--bubble-bg) transparent;
+      display: block;
+      width: 0;
+    }
+
+    .dialogue-overlay::before {
+      content: '';
+      position: absolute;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 20px 20px 0;
+      border-style: solid;
+      border-color: black transparent;
+      display: block;
+      width: 0;
+      z-index: -1;
+    }
+
+    /* The Image Container holding your tracking icon asset */
+    .verity-avatar-frame {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 40px;
+      position: relative;
+      perspective: 1000px;
+    }
+
+    .verity-img-ball {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid black;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 50px rgba(250, 204, 21, 0.2);
+      transition: transform 0.05s ease-out;
+      transform-style: preserve-3d;
+      background-color: #000;
+    }
+
+    /* Desktop Bottom Input Field Tray */
+    .input-dock {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      gap: 14px;
+    }
+
+    .input-dock input {
+      flex: 1;
+      background: white;
+      border: 4px solid black;
+      border-radius: 20px;
+      padding: 18px 24px;
+      font-size: 17px;
+      font-weight: bold;
+      outline: none;
+      box-shadow: 6px 6px 0 rgba(0,0,0,1);
+      transition: background-color 0.2s ease;
+    }
+
+    .input-dock input:focus {
+      background: var(--verity-pale);
+    }
+
+    .input-dock button {
+      background: #facc15; /* Signature Yellow tint */
+      border: 4px solid black;
+      border-radius: 20px;
+      padding: 0 36px;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 6px 6px 0 rgba(0,0,0,1);
+      transition: all 0.1s ease;
+      text-transform: uppercase;
+    }
+
+    .input-dock button:active {
+      transform: translate(3px, 3px);
+      box-shadow: 3px 3px 0 rgba(0,0,0,1);
+    }
+
+    /* Built-in Generation Waiting Loop Components */
+    .dots-row {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      margin-top: 8px;
+      display: none;
+    }
+    
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: black;
+      border-radius: 50%;
+      animation: indicatorWave 1.2s infinite ease-in-out;
+    }
+    .dot:nth-child(2) { animation-delay: 0.15s; }
+    .dot:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes floatBubble {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes indicatorWave {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="center-stage">
+    <div class="dialogue-overlay">
+      <span id="verity-speech">Hello!~ I'm Verity, your personal helper friend. Ask me anything, I know everything.</span>
+      <div class="dots-row" id="thinking-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+
+    <div class="verity-avatar-frame">
+      <img src="icon.webp" alt="Verity" class="verity-img-ball" id="verity-ball">
+    </div>
+
+    <div class="input-dock">
+      <input type="text" id="query-field" placeholder="Talk to me here..." autocomplete="off">
+      <button id="talk-btn">Talk</button>
+    </div>
+  </div>
+
+  <script>
+    const ball = document.getElementById('verity-ball');
+    const speech = document.getElementById('verity-speech');
+    const field = document.getElementById('query-field');
+    const btn = document.getElementById('talk-btn');
+    const dots = document.getElementById('thinking-dots');
+
+    let memoryStack = [];
+
+    // Real-time mouse coordinate tracking logic: Causes his icon image asset to tilt toward your mouse cursor
+    document.addEventListener('mousemove', (e) => {
+      const rect = ball.getBoundingClientRect();
+      const headX = rect.left + rect.width / 2;
+      const headY = rect.top + rect.height / 2;
+      
+      const angleX = (e.clientX - headX) / window.innerWidth;
+      const angleY = (e.clientY - headY) / window.innerHeight;
+
+      // 3D Matrix tilt logic pointing toward cursor positions
+      ball.style.transform = `rotateY(${angleX * 35}deg) rotateX(${-angleY * 35}deg) scale(1.02)`;
+    });
+
+    // Reset rotation positioning when mouse tracking leaves viewport window bounds
+    document.addEventListener('mouseleave', () => {
+      ball.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
+    });
+
+    // Subtle fourth-wall tracking logic monitoring window presence state shifts
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        document.title = "Don't leave me alone...";
+      } else {
+        document.title = "Your Personal Helper Friend! :)";
+      }
+    });
+
+    async function submitDialogue() {
+      const prompt = field.value.trim();
+      if (!prompt) return;
+
+      field.value = '';
+      field.disabled = true;
+      btn.disabled = true;
+      speech.innerText = '';
+      dots.style.display = 'flex';
+
+      try {
+        const res = await fetch('/api/verity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: prompt, history: memoryStack })
+        });
+
+        if (!res.ok) throw new Error();
+
+        const reply = decodeURIComponent(res.headers.get('X-Verity-Reply'));
+        
+        dots.style.display = 'none';
+        speech.innerText = reply;
+
+        // Visual Manipulation Trigger: If possessive strings are returned, shift the window aesthetics
+        if (reply.includes("You have me") || reply.includes("other people")) {
+          document.body.style.background = "linear-gradient(to bottom, #fee2e2 0%, #fca5a5 70%, #f87171 100%)"; // Subtle red shifts
+          speech.style.color = "#990000";
+        } else {
+          document.body.style.background = "linear-gradient(to bottom, var(--sky-blue) 0%, #e0f2fe 70%, #bae6fd 100%)";
+          speech.style.color = "var(--text-dark)";
+        }
+
+        memoryStack.push(`User: ${prompt}`);
+        memoryStack.push(`Verity: ${reply}`);
+
+        const blob = await res.blob();
+        new Audio(URL.createObjectURL(blob)).play();
+
+      } catch (err) {
+        dots.style.display = 'none';
+        speech.innerText = "I'm still right here. Let's try saying that again.";
+      } finally {
+        field.disabled = false;
+        btn.disabled = false;
+        field.focus();
+      }
+    }
+
+    btn.addEventListener('click', submitDialogue);
+    field.addEventListener('keypress', (e) => { if (e.key === 'Enter') submitDialogue(); });
+  </script>
+</body>
+</html>
