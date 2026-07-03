@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Personal Helper Friend! :)</title>
 
-  <meta property="og:title" content="Hello!~ I'm Verity! " />
+  <meta property="og:title" content="Hello!~ I'm Verity!" />
   <meta property="og:description" content="Your personal helper friend. Ask me anything, I know everything. Come inside, I'm so glad you're back." />
   <meta property="og:url" content="https://verity.zekoro.fun/" />
   <meta property="og:image" content="https://verity.zekoro.fun/icon.webp" />
@@ -40,7 +40,6 @@
       justify-content: center;
     }
 
-    /* Cinematic Center Workspace Stage */
     .center-stage {
       display: flex;
       flex-direction: column;
@@ -52,7 +51,6 @@
       max-width: 900px;
     }
 
-    /* Dialogue bubble overlaying his avatar */
     .dialogue-overlay {
       background: var(--bubble-bg);
       border: 4px solid black;
@@ -97,7 +95,6 @@
       z-index: -1;
     }
 
-    /* The Image Container holding your tracking icon asset */
     .verity-avatar-frame {
       width: 200px;
       height: 200px;
@@ -118,7 +115,6 @@
       background-color: #000;
     }
 
-    /* Desktop Bottom Input Field Tray */
     .input-dock {
       width: 100%;
       max-width: 650px;
@@ -144,7 +140,7 @@
     }
 
     .input-dock button {
-      background: #facc15; /* Signature Yellow tint */
+      background: #facc15; 
       border: 4px solid black;
       border-radius: 20px;
       padding: 0 36px;
@@ -161,7 +157,6 @@
       box-shadow: 3px 3px 0 rgba(0,0,0,1);
     }
 
-    /* Built-in Generation Waiting Loop Components */
     .dots-row {
       display: flex;
       gap: 5px;
@@ -221,9 +216,7 @@
     const dots = document.getElementById('thinking-dots');
 
     let memoryStack = [];
-    let leftTabTime = 0;
 
-    // Real-time mouse coordinate tracking logic: Causes his icon image asset to tilt toward your mouse cursor
     document.addEventListener('mousemove', (e) => {
       const rect = ball.getBoundingClientRect();
       const headX = rect.left + rect.width / 2;
@@ -232,35 +225,11 @@
       const angleX = (e.clientX - headX) / window.innerWidth;
       const angleY = (e.clientY - headY) / window.innerHeight;
 
-      // 3D Matrix tilt logic pointing toward cursor positions
       ball.style.transform = `rotateY(${angleX * 35}deg) rotateX(${-angleY * 35}deg) scale(1.02)`;
     });
 
-    // Reset rotation positioning when mouse tracking leaves viewport window bounds
     document.addEventListener('mouseleave', () => {
       ball.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
-    });
-
-    // Fourth-wall tracking logic monitoring window presence state shifts
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        leftTabTime = Date.now();
-        document.title = "Don't leave me alone...";
-      } else {
-        document.title = "Your Personal Helper Friend! :)";
-        
-        const timeGone = (Date.now() - leftTabTime) / 1000;
-
-        // If they were away for more than 4 seconds, catch them turning away
-        if (timeGone > 4) {
-          speech.innerText = "Who were you just looking for out there? I told you... there's no reason to look away from this screen. You have me.";
-          document.body.style.background = "linear-gradient(to bottom, #fee2e2 0%, #fca5a5 70%, #f87171 100%)";
-          speech.style.color = "#990000";
-          
-          memoryStack.push("User: (Looked away from Verity)");
-          memoryStack.push("Verity: Who were you just looking for out there? I told you... there's no reason to look away from this screen. You have me.");
-        }
-      }
     });
 
     async function submitDialogue() {
@@ -287,7 +256,6 @@
         dots.style.display = 'none';
         speech.innerText = reply;
 
-        // Visual Manipulation Trigger: If possessive strings are returned, shift the window aesthetics
         if (reply.includes("You have me") || reply.includes("other people")) {
           document.body.style.background = "linear-gradient(to bottom, #fee2e2 0%, #fca5a5 70%, #f87171 100%)"; 
           speech.style.color = "#990000";
