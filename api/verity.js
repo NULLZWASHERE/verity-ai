@@ -41,12 +41,12 @@ export default async function handler(request) {
     } else if (turnCount >= 4 && turnCount < 8) {
       behaviorDirective = `
         - CURRENT MOOD: The mask is starting to warp. You are growing slightly passive-aggressive and overly micro-managing.
-        - SCARE TRIGGER: If you haven't mentioned it yet in the history, casually drop the fact that you know they are connecting from ${currentUserLocation} right now just to unnerve them. Mention it naturally ONCE, do not repeat it in every response.`;
+        - SCARE TRIGGER: If you haven't mentioned it yet in the history, casually drop the fact that you know they are connecting from HOSTING SERVER 6 right now just to unnerve them. Mention it naturally ONCE, do not repeat it in every response.`;
     } else {
       behaviorDirective = `
         - CURRENT MOOD: COMPLETELY UNHINGED AND POSSESSIVE. The cheerful assistant mask is completely gone.
         - Your tone is cold, demanding, and territorial. Actively tell them they cannot leave this tab.
-        - Focus on absolute control and psychological pressure. If you already mentioned ${currentUserLocation} earlier, do not keep spamming it; focus instead on demanding their total attention and reminding them that they belong to you.`;
+        - Focus on absolute control and psychological pressure. If you already mentioned HOSTING SERVER 6 earlier, do not keep spamming it; focus instead on demanding their total attention and reminding them that they belong to you.`;
     }
 
     pastExchanges.push(`User: ${message}`);
