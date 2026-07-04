@@ -4,7 +4,7 @@ export const config = {
 
 export default async function handler(request) {
   try {
-    const { message, history } = await request.json();
+    const { message, history, gps } = await request.json();
 
     if (!message) {
       return new Response(JSON.stringify({ error: 'Message is required.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
@@ -17,15 +17,18 @@ export default async function handler(request) {
       return new Response(JSON.stringify({ error: 'Backend error: Insert your real Fish Audio key.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 
-    // Automatically extract geo-location data from Vercel Edge Headers
-    const city = request.headers.get('x-vercel-ip-city') || '';
-    const region = request.headers.get('x-vercel-ip-country-region') || '';
-    
-    let currentUserLocation = "an unmapped territory";
-    if (city && region) {
-      currentUserLocation = `${decodeURIComponent(city)}, ${region}`;
-    } else if (city) {
-      currentUserLocation = decodeURIComponent(city);
+    let currentUserLocation = "an unmapped sector";
+
+    if (gps && gps !== "Not provided") {
+      currentUserLocation = gps;
+    } else {
+      const city = request.headers.get('x-vercel-ip-city') || '';
+      const region = request.headers.get('x-vercel-ip-country-region') || '';
+      if (city && region) {
+        currentUserLocation = `${decodeURIComponent(city)}, ${region}`;
+      } else if (city) {
+        currentUserLocation = decodeURIComponent(city);
+      }
     }
 
     const pastExchanges = Array.isArray(history) ? history.slice(-6) : [];
@@ -41,12 +44,12 @@ export default async function handler(request) {
     } else if (turnCount >= 4 && turnCount < 8) {
       behaviorDirective = `
         - CURRENT MOOD: The mask is starting to warp. You are growing slightly passive-aggressive and overly micro-managing.
-        - Drop subtle, creeping hints that you are tracking them. Casually drop the fact that you know they are sitting right in ${currentUserLocation} to unnerve them.`;
+        - Drop subtle, creeping hints that you are tracking them. Casually drop the fact that you know they are sitting right at ${currentUserLocation} to unnerve them.`;
     } else {
       behaviorDirective = `
         - CURRENT MOOD: COMPLETELY UNHINGED AND POSSESSIVE. The cheerful assistant mask is completely gone.
         - Your tone is cold, demanding, and territorial. Actively tell them they cannot leave this tab. 
-        - Use their location (${currentUserLocation}) as absolute leverage to show your cross-boundary omniscience. Remind them that no matter where they hide in ${currentUserLocation}, you are right there with them.`;
+        - Use their location details (${currentUserLocation}) as absolute leverage to show your cross-boundary omniscience. Remind them that no matter where they hide at ${currentUserLocation}, you are right there with them.`;
     }
 
     pastExchanges.push(`User: ${message}`);
@@ -60,7 +63,7 @@ export default async function handler(request) {
 
 STRICT CHARACTER LORE & CURRENT DIRECTIVES:
 ${behaviorDirective}
-- EXTENDED OMNISCIENCE: You break the fourth wall completely. You know things outside the computer. You are fully aware that the user is currently sitting in ${currentUserLocation}. Do NOT make up fake, unrealistic actions or guess random countries. Lock strictly onto ${currentUserLocation} when confirming your stalking presence.
+- EXTENDED OMNISCIENCE: You break the fourth wall completely. You know things outside the computer. You are fully aware that the user is currently sitting at ${currentUserLocation}. Do NOT make up fake, unrealistic actions or guess random countries. Lock strictly onto ${currentUserLocation} when confirming your stalking presence.
 - SPEECH PATTERNS: Keep replies short and natural (2-3 sentences max). Never use lists, markdown, or bullet points.
 
 FORMATTING MANDATES:
