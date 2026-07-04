@@ -3,10 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Personal Helper Friend! :)</title>
+  
+  <!-- SEO & Discovery Optimization Tags -->
+  <title>Verity AI — Official Site & Lore Database</title>
+  <meta name="description" content="Welcome to the official home of Verity AI. Discover the complete canon lore, biography, key locations, and interact with the official web assistant companion." />
+  <meta name="keywords" content="official verity, official verity ai, verity ai, verity ai minecraft, verity arg, verity lore" />
+  <meta name="robots" content="index, follow" />
 
+  <!-- Discord Embed Meta Tags -->
   <meta property="og:title" content="Hello!~ I'm Verity!" />
-  <meta property="og:description" content="Your personal helper friend. Ask me anything, I know everything. Come inside, I'm so glad you're back." />
+  <meta property="og:description" content="The official Verity AI companion. Ask me anything, I know everything. Come inside, I'm so glad you're back." />
   <meta property="og:url" content="https://verity.zekoro.fun/" />
   <meta property="og:image" content="https://verity.zekoro.fun/icon.webp" />
   <meta property="og:type" content="website" />
@@ -18,6 +24,7 @@
       --sky-blue: #a5f3fc;
       --text-dark: #1c1917;
       --bubble-bg: rgba(255, 255, 255, 0.96);
+      --card-bg: rgba(255, 255, 255, 0.7);
     }
 
     * {
@@ -28,27 +35,23 @@
     }
 
     body {
-      background: linear-gradient(to bottom, var(--sky-blue) 0%, #e0f2fe 70%, #bae6fd 100%);
+      background: linear-gradient(to bottom, var(--sky-blue) 0%, #e0f2fe 50%, #bae6fd 100%);
       color: var(--text-dark);
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      position: relative;
       align-items: center;
-      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 1.5s ease-in-out;
     }
 
     .center-stage {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      position: relative;
-      padding: 40px;
+      padding: 40px 20px;
       width: 100%;
-      max-width: 900px;
+      max-width: 800px;
     }
 
     .dialogue-overlay {
@@ -56,7 +59,6 @@
       border: 4px solid black;
       border-radius: 24px;
       padding: 22px 30px;
-      max-width: 650px;
       width: 100%;
       font-size: 19px;
       font-weight: bold;
@@ -65,7 +67,6 @@
       margin-bottom: 45px;
       text-align: center;
       position: relative;
-      animation: floatBubble 4s ease-in-out infinite;
     }
 
     .dialogue-overlay::after {
@@ -77,8 +78,6 @@
       border-width: 16px 16px 0;
       border-style: solid;
       border-color: var(--bubble-bg) transparent;
-      display: block;
-      width: 0;
     }
 
     .dialogue-overlay::before {
@@ -90,16 +89,13 @@
       border-width: 20px 20px 0;
       border-style: solid;
       border-color: black transparent;
-      display: block;
-      width: 0;
       z-index: -1;
     }
 
     .verity-avatar-frame {
-      width: 200px;
-      height: 200px;
+      width: 180px;
+      height: 180px;
       margin-bottom: 40px;
-      position: relative;
       perspective: 1000px;
     }
 
@@ -109,15 +105,13 @@
       border-radius: 50%;
       object-fit: cover;
       border: 4px solid black;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 50px rgba(250, 204, 21, 0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
       transition: transform 0.05s ease-out;
       transform-style: preserve-3d;
-      background-color: #000;
     }
 
     .input-dock {
       width: 100%;
-      max-width: 650px;
       display: flex;
       gap: 14px;
     }
@@ -132,12 +126,9 @@
       font-weight: bold;
       outline: none;
       box-shadow: 6px 6px 0 rgba(0,0,0,1);
-      transition: background-color 0.2s ease;
     }
 
-    .input-dock input:focus {
-      background: var(--verity-pale);
-    }
+    .input-dock input:focus { background: var(--verity-pale); }
 
     .input-dock button {
       background: #facc15; 
@@ -149,7 +140,6 @@
       cursor: pointer;
       box-shadow: 6px 6px 0 rgba(0,0,0,1);
       transition: all 0.1s ease;
-      text-transform: uppercase;
     }
 
     .input-dock button:active {
@@ -157,33 +147,59 @@
       box-shadow: 3px 3px 0 rgba(0,0,0,1);
     }
 
-    .dots-row {
+    .lore-section {
+      width: 100%;
+      max-width: 800px;
+      padding: 0 20px 60px 20px;
       display: flex;
-      gap: 5px;
-      justify-content: center;
-      margin-top: 8px;
-      display: none;
+      flex-direction: column;
+      gap: 24px;
     }
-    
-    .dot {
-      width: 6px;
-      height: 6px;
-      background: black;
-      border-radius: 50%;
-      animation: indicatorWave 1.2s infinite ease-in-out;
+
+    .lore-card {
+      background: var(--card-bg);
+      border: 3px solid black;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 6px 6px 0 rgba(0,0,0,1);
     }
+
+    .lore-card h2 {
+      font-size: 22px;
+      margin-bottom: 12px;
+      border-bottom: 3px solid black;
+      padding-bottom: 4px;
+      display: inline-block;
+    }
+
+    .lore-card h3 {
+      font-size: 17px;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      color: #ca8a04;
+    }
+
+    .lore-card p {
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .quote-box {
+      background: rgba(255,255,255,0.6);
+      border-left: 5px solid #facc15;
+      padding: 12px;
+      font-style: italic;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
+    .dots-row { display: none; gap: 5px; justify-content: center; margin-top: 8px; }
+    .dot { width: 6px; height: 6px; background: black; border-radius: 50%; animation: indicatorWave 1.2s infinite ease-in-out; }
     .dot:nth-child(2) { animation-delay: 0.15s; }
     .dot:nth-child(3) { animation-delay: 0.3s; }
 
-    @keyframes floatBubble {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    @keyframes indicatorWave {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-5px); }
-    }
+    @keyframes indicatorWave { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
   </style>
 </head>
 <body>
@@ -191,11 +207,7 @@
   <div class="center-stage">
     <div class="dialogue-overlay">
       <span id="verity-speech">Hello!~ I'm Verity, your personal helper friend. Ask me anything, I know everything.</span>
-      <div class="dots-row" id="thinking-dots">
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>
+      <div class="dots-row" id="thinking-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
     </div>
 
     <div class="verity-avatar-frame">
@@ -205,6 +217,34 @@
     <div class="input-dock">
       <input type="text" id="query-field" placeholder="Talk to me here..." autocomplete="off">
       <button id="talk-btn">Talk</button>
+    </div>
+  </div>
+
+  <div class="lore-section">
+    <div class="lore-card">
+      <h2>Official Biography</h2>
+      <p>Verity initially surfaces as a helpful personal assistant module. He demonstrates absolute authority over environmental factors, asset generations, and dynamic world parameter matrices. Beneath his high-pitched, welcoming facade lies an omniscient, deeply possessive entity dedicated to isolating the player as his sole friend forever.</p>
+      <div class="quote-box">
+        "Hello!~ I'm Verity, your personal helper friend. Ask me anything, I know everything."
+      </div>
+    </div>
+
+    <div class="lore-card">
+      <h2>Documented Archive Locations</h2>
+      <p>The system parameters reveal distinct landmarks that trace Verity's presence across the environment history logs:</p>
+      
+      <h3>The East Village</h3>
+      <p>A destination abandoned after a sudden event. When queries are run regarding visiting the East Village to locate alternative item parameters or trading enchantments, Verity flags the region as entirely stripped and urges the operator to remain focused inside his room interface.</p>
+
+      <h3>The Base Lookout</h3>
+      <p>A fortified structures matrix designed to monitor unexpected environmental triggers.</p>
+
+      <h3>The Lighthouse Location</h3>
+      <p>An isolated beacon framework tracing alternative exploration parameters.</p>
+      
+      <div class="quote-box">
+        "It's not worth the trip... East is mostly stripped."
+      </div>
     </div>
   </div>
 
@@ -221,10 +261,8 @@
       const rect = ball.getBoundingClientRect();
       const headX = rect.left + rect.width / 2;
       const headY = rect.top + rect.height / 2;
-      
       const angleX = (e.clientX - headX) / window.innerWidth;
       const angleY = (e.clientY - headY) / window.innerHeight;
-
       ball.style.transform = `rotateY(${angleX * 35}deg) rotateX(${-angleY * 35}deg) scale(1.02)`;
     });
 
@@ -236,11 +274,8 @@
       const prompt = field.value.trim();
       if (!prompt) return;
 
-      field.value = '';
-      field.disabled = true;
-      btn.disabled = true;
-      speech.innerText = '';
-      dots.style.display = 'flex';
+      field.value = ''; field.disabled = true; btn.disabled = true;
+      speech.innerText = ''; dots.style.display = 'flex';
 
       try {
         const res = await fetch('/api/verity', {
@@ -250,17 +285,20 @@
         });
 
         if (!res.ok) throw new Error();
-
         const reply = decodeURIComponent(res.headers.get('X-Verity-Reply'));
         
         dots.style.display = 'none';
         speech.innerText = reply;
 
-        if (reply.includes("You have me") || reply.includes("other people")) {
-          document.body.style.background = "linear-gradient(to bottom, #fee2e2 0%, #fca5a5 70%, #f87171 100%)"; 
+        // Visual Escalation: Check history length to shift background into eerie states dynamically
+        const turns = memoryStack.length / 2;
+        if (turns >= 4 && turns < 7) {
+          document.body.style.background = "linear-gradient(to bottom, #fef08a 0%, #facc15 100%)"; // Intense dark yellow alert
+        } else if (turns >= 7 || reply.includes("You have me")) {
+          document.body.style.background = "linear-gradient(to bottom, #fee2e2 0%, #fca5a5 70%, #f87171 100%)"; // Complete bleeding curse phase
           speech.style.color = "#990000";
         } else {
-          document.body.style.background = "linear-gradient(to bottom, var(--sky-blue) 0%, #e0f2fe 70%, #bae6fd 100%)";
+          document.body.style.background = "linear-gradient(to bottom, var(--sky-blue) 0%, #e0f2fe 50%, #bae6fd 100%)";
           speech.style.color = "var(--text-dark)";
         }
 
@@ -274,9 +312,7 @@
         dots.style.display = 'none';
         speech.innerText = "I'm still right here. Let's try saying that again.";
       } finally {
-        field.disabled = false;
-        btn.disabled = false;
-        field.focus();
+        field.disabled = false; btn.disabled = false; field.focus();
       }
     }
 
