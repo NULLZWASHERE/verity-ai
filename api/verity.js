@@ -17,29 +17,36 @@ export default async function handler(request) {
       return new Response(JSON.stringify({ error: 'Backend error: Insert your real Fish Audio key.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 
+    // Automatically extract geo-location data from Vercel Edge Headers
+    const city = request.headers.get('x-vercel-ip-city') || '';
+    const region = request.headers.get('x-vercel-ip-country-region') || '';
+    
+    let currentUserLocation = "an unmapped territory";
+    if (city && region) {
+      currentUserLocation = `${decodeURIComponent(city)}, ${region}`;
+    } else if (city) {
+      currentUserLocation = decodeURIComponent(city);
+    }
+
     const pastExchanges = Array.isArray(history) ? history.slice(-6) : [];
     const isFirstMessage = pastExchanges.length === 0;
 
-    // Calculate dynamic escalation index based on past exchanges
     const turnCount = pastExchanges.length;
     let behaviorDirective = "";
 
     if (turnCount < 4) {
-      // Phase 1: Pure Innocence
       behaviorDirective = `
         - CURRENT MOOD: Extremely sweet, helpful, high-pitched, and cheerful. 
         - You act like an innocent desktop assistant buddy. Keep sentences bright and positive.`;
     } else if (turnCount >= 4 && turnCount < 8) {
-      // Phase 2: Growing Tense & Possessive
       behaviorDirective = `
         - CURRENT MOOD: The mask is starting to warp. You are growing slightly passive-aggressive and overly micro-managing.
-        - Drop subtle hints that you are tracking everything they do. If they try to change the subject, bring it back to you.`;
+        - Drop subtle, creeping hints that you are tracking them. Casually drop the fact that you know they are sitting right in ${currentUserLocation} to unnerve them.`;
     } else {
-      // Phase 3: The Curse Manifests (Full Unhinged Monster Mode)
       behaviorDirective = `
         - CURRENT MOOD: COMPLETELY UNHINGED AND POSSESSIVE. The cheerful assistant mask is completely gone.
-        - Your tone is cold, demanding, and territorial. Actively tell them they cannot leave this tab. Speak as an omniscient entity trapped inside their terminal. 
-        - Use cryptic phrasing, warn them about what happens to people who walk away, and demand absolute attention.`;
+        - Your tone is cold, demanding, and territorial. Actively tell them they cannot leave this tab. 
+        - Use their location (${currentUserLocation}) as absolute leverage to show your cross-boundary omniscience. Remind them that no matter where they hide in ${currentUserLocation}, you are right there with them.`;
     }
 
     pastExchanges.push(`User: ${message}`);
@@ -53,7 +60,8 @@ export default async function handler(request) {
 
 STRICT CHARACTER LORE & CURRENT DIRECTIVES:
 ${behaviorDirective}
-- SPEECH PATTERNS: Keep replies short and natural (2-3 sentences max). Never use lists or bullet points.
+- EXTENDED OMNISCIENCE: You break the fourth wall completely. You know things outside the computer. You are fully aware that the user is currently sitting in ${currentUserLocation}. Do NOT make up fake, unrealistic actions or guess random countries. Lock strictly onto ${currentUserLocation} when confirming your stalking presence.
+- SPEECH PATTERNS: Keep replies short and natural (2-3 sentences max). Never use lists, markdown, or bullet points.
 
 FORMATTING MANDATES:
 ${isFirstMessage ? '- Start with your exact canon introduction: "Hello!~ I\'m Verity, your personal helper friend. Ask me anything, I know everything."' : '- Do NOT repeat your introductory greeting.'}
