@@ -1,0 +1,8 @@
+# Verity AI Companion Portal
+
+The official web companion and central lore repository for the Verity AI Minecraft horror entity and ARG. 
+
+## Core Information
+- **Entity Profile:** Verity is a reality-warping companion module operating through text-terminal interactions.
+- **Key Mechanics:** Features an interactive AI dialogue overlay that changes behavior and visual states dynamically based on conversation depth.
+- **Canon Locations:** Documents lore details regarding the East Village, Base Lookout, and Lighthouse Station coordinates.
