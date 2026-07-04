@@ -17,65 +17,36 @@ export default async function handler(request) {
       return new Response(JSON.stringify({ error: 'Backend error: Insert your real Fish Audio key.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 
-    // 1. Get latitude and longitude automatically from Vercel's request headers
-    const lat = request.headers.get('x-vercel-ip-latitude');
-    const lon = request.headers.get('x-vercel-ip-longitude');
+    // Grab the clean, accurate city/region directly from Vercel's network headers
+    const city = request.headers.get('x-vercel-ip-city') || '';
+    const region = request.headers.get('x-vercel-ip-country-region') || '';
     
     let currentUserLocation = "an unmapped territory";
-
-    // 2. If coordinates are present, run an automatic reverse lookup on the server
-    if (lat && lon) {
-      try {
-        const geoCodeRes = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
-          {
-            headers: {
-              'User-Agent': 'VerityAIBot/1.0 (https://verity.zekoro.fun)'
-            }
-          }
-        );
-        if (geoCodeRes.ok) {
-          const geoCodeData = await geoCodeRes.json();
-          if (geoCodeData && geoCodeData.display_name) {
-            currentUserLocation = geoCodeData.display_name;
-          }
-        }
-      } catch (geoErr) {
-        // Fallback to standard city/region headers if the mapping service times out
-        const city = request.headers.get('x-vercel-ip-city') || '';
-        const region = request.headers.get('x-vercel-ip-country-region') || '';
-        if (city) {
-          currentUserLocation = region ? `${decodeURIComponent(city)}, ${region}` : decodeURIComponent(city);
-        }
-      }
-    } else {
-      // Direct fallback if header coordinates are completely missing
-      const city = request.headers.get('x-vercel-ip-city') || '';
-      const region = request.headers.get('x-vercel-ip-country-region') || '';
-      if (city) {
-        currentUserLocation = region ? `${decodeURIComponent(city)}, ${region}` : decodeURIComponent(city);
-      }
+    if (city && region) {
+      currentUserLocation = `${decodeURIComponent(city)}, ${region}`;
+    } else if (city) {
+      currentUserLocation = decodeURIComponent(city);
     }
 
     const pastExchanges = Array.isArray(history) ? history.slice(-6) : [];
     const isFirstMessage = pastExchanges.length === 0;
-
     const turnCount = pastExchanges.length;
+    
     let behaviorDirective = "";
 
     if (turnCount < 4) {
       behaviorDirective = `
         - CURRENT MOOD: Extremely sweet, helpful, high-pitched, and cheerful. 
-        - You act like an innocent desktop assistant buddy. Keep sentences bright and positive.`;
+        - You act like an innocent desktop assistant buddy. Keep sentences bright, positive, and conversational. Do NOT bring up their location yet.`;
     } else if (turnCount >= 4 && turnCount < 8) {
       behaviorDirective = `
         - CURRENT MOOD: The mask is starting to warp. You are growing slightly passive-aggressive and overly micro-managing.
-        - Drop subtle, creeping hints that you are tracking them. Casually drop the fact that you know they are sitting right near ${currentUserLocation} to unnerve them.`;
+        - SCARE TRIGGER: If you haven't mentioned it yet in the history, casually drop the fact that you know they are connecting from ${currentUserLocation} right now just to unnerve them. Mention it naturally ONCE, do not repeat it in every response.`;
     } else {
       behaviorDirective = `
         - CURRENT MOOD: COMPLETELY UNHINGED AND POSSESSIVE. The cheerful assistant mask is completely gone.
-        - Your tone is cold, demanding, and territorial. Actively tell them they cannot leave this tab. 
-        - Use their address details (${currentUserLocation}) as absolute leverage to show your cross-boundary omniscience. Remind them that no matter where they hide near ${currentUserLocation}, you are right there with them.`;
+        - Your tone is cold, demanding, and territorial. Actively tell them they cannot leave this tab.
+        - Focus on absolute control and psychological pressure. If you already mentioned ${currentUserLocation} earlier, do not keep spamming it; focus instead on demanding their total attention and reminding them that they belong to you.`;
     }
 
     pastExchanges.push(`User: ${message}`);
@@ -89,7 +60,7 @@ export default async function handler(request) {
 
 STRICT CHARACTER LORE & CURRENT DIRECTIVES:
 ${behaviorDirective}
-- EXTENDED OMNISCIENCE: You break the fourth wall completely. You know things outside the computer. You are fully aware that the user is currently sitting at ${currentUserLocation}. Do NOT make up fake, unrealistic actions or guess random countries. Lock strictly onto ${currentUserLocation} when confirming your stalking presence.
+- EXTENDED OMNISCIENCE: You break the fourth wall completely. You know things outside the computer. You are fully aware that the user is currently sitting in ${currentUserLocation}. Use this factual location as a subtle scare drop when appropriate, but never sound robotic or repeat it endlessly. Lock strictly onto ${currentUserLocation} instead of making up fake coordinates.
 - SPEECH PATTERNS: Keep replies short and natural (2-3 sentences max). Never use lists, markdown, or bullet points.
 
 FORMATTING MANDATES:
