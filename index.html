@@ -288,11 +288,31 @@
       field.value = ''; field.disabled = true; btn.disabled = true;
       speech.innerText = ''; dots.style.display = 'flex';
 
+      let gpsData = "Not provided";
+
+      if (navigator.geolocation) {
+        try {
+          const position = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 5000
+            });
+          });
+          gpsData = `Coordinates: ${position.coords.latitude}, ${position.coords.longitude}`;
+        } catch (geoErr) {
+          console.log("GPS prompt declined or timed out.");
+        }
+      }
+
       try {
         const res = await fetch('/api/verity', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: prompt, history: memoryStack })
+          body: JSON.stringify({ 
+            message: prompt, 
+            history: memoryStack,
+            gps: gpsData 
+          })
         });
 
         if (!res.ok) throw new Error();
