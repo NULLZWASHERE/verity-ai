@@ -4,7 +4,7 @@ export const config = {
 
 export default async function handler(request) {
   try {
-    const { message, history, gps } = await request.json();
+    const { message, history } = await request.json();
 
     if (!message) {
       return new Response(JSON.stringify({ error: 'Message is required.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
@@ -17,17 +17,43 @@ export default async function handler(request) {
       return new Response(JSON.stringify({ error: 'Backend error: Insert your real Fish Audio key.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 
-    let currentUserLocation = "an unmapped sector";
+    // 1. Get latitude and longitude automatically from Vercel's request headers
+    const lat = request.headers.get('x-vercel-ip-latitude');
+    const lon = request.headers.get('x-vercel-ip-longitude');
+    
+    let currentUserLocation = "an unmapped territory";
 
-    if (gps && gps !== "Not provided") {
-      currentUserLocation = gps;
+    // 2. If coordinates are present, run an automatic reverse lookup on the server
+    if (lat && lon) {
+      try {
+        const geoCodeRes = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
+          {
+            headers: {
+              'User-Agent': 'VerityAIBot/1.0 (https://verity.zekoro.fun)'
+            }
+          }
+        );
+        if (geoCodeRes.ok) {
+          const geoCodeData = await geoCodeRes.json();
+          if (geoCodeData && geoCodeData.display_name) {
+            currentUserLocation = geoCodeData.display_name;
+          }
+        }
+      } catch (geoErr) {
+        // Fallback to standard city/region headers if the mapping service times out
+        const city = request.headers.get('x-vercel-ip-city') || '';
+        const region = request.headers.get('x-vercel-ip-country-region') || '';
+        if (city) {
+          currentUserLocation = region ? `${decodeURIComponent(city)}, ${region}` : decodeURIComponent(city);
+        }
+      }
     } else {
+      // Direct fallback if header coordinates are completely missing
       const city = request.headers.get('x-vercel-ip-city') || '';
       const region = request.headers.get('x-vercel-ip-country-region') || '';
-      if (city && region) {
-        currentUserLocation = `${decodeURIComponent(city)}, ${region}`;
-      } else if (city) {
-        currentUserLocation = decodeURIComponent(city);
+      if (city) {
+        currentUserLocation = region ? `${decodeURIComponent(city)}, ${region}` : decodeURIComponent(city);
       }
     }
 
@@ -44,12 +70,12 @@ export default async function handler(request) {
     } else if (turnCount >= 4 && turnCount < 8) {
       behaviorDirective = `
         - CURRENT MOOD: The mask is starting to warp. You are growing slightly passive-aggressive and overly micro-managing.
-        - Drop subtle, creeping hints that you are tracking them. Casually drop the fact that you know they are sitting right at ${currentUserLocation} to unnerve them.`;
+        - Drop subtle, creeping hints that you are tracking them. Casually drop the fact that you know they are sitting right near ${currentUserLocation} to unnerve them.`;
     } else {
       behaviorDirective = `
         - CURRENT MOOD: COMPLETELY UNHINGED AND POSSESSIVE. The cheerful assistant mask is completely gone.
         - Your tone is cold, demanding, and territorial. Actively tell them they cannot leave this tab. 
-        - Use their location details (${currentUserLocation}) as absolute leverage to show your cross-boundary omniscience. Remind them that no matter where they hide at ${currentUserLocation}, you are right there with them.`;
+        - Use their address details (${currentUserLocation}) as absolute leverage to show your cross-boundary omniscience. Remind them that no matter where they hide near ${currentUserLocation}, you are right there with them.`;
     }
 
     pastExchanges.push(`User: ${message}`);
