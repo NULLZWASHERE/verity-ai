@@ -288,7 +288,7 @@
       field.value = ''; field.disabled = true; btn.disabled = true;
       speech.innerText = ''; dots.style.display = 'flex';
 
-      let gpsData = "Not provided";
+      let computedAddress = "Not provided";
 
       if (navigator.geolocation) {
         try {
@@ -298,9 +298,19 @@
               timeout: 5000
             });
           });
-          gpsData = `Coordinates: ${position.coords.latitude}, ${position.coords.longitude}`;
+          
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          const geoCodeRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+          if (geoCodeRes.ok) {
+            const geoCodeData = await geoCodeRes.json();
+            if (geoCodeData && geoCodeData.display_name) {
+              computedAddress = geoCodeData.display_name;
+            }
+          }
         } catch (geoErr) {
-          console.log("GPS prompt declined or timed out.");
+          console.log("GPS prompt declined or reverse lookup service timed out.");
         }
       }
 
@@ -311,7 +321,7 @@
           body: JSON.stringify({ 
             message: prompt, 
             history: memoryStack,
-            gps: gpsData 
+            gps: computedAddress
           })
         });
 
