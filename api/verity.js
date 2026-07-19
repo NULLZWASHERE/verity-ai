@@ -10,7 +10,7 @@ export default async function handler(request) {
       return new Response(JSON.stringify({ error: 'Message is required.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
-    const HARDCODED_FISH_API_KEY = '2e2e1f1fa96e4e078ddcde10b840adda'; 
+    const HARDCODED_FISH_API_KEY = 'a6695f3307444ac4919dc8d2326acaaf'; 
     const VERITY_MODEL_ID = '80a82440f4d64974b292eb0f66f4a42c';
 
     if (HARDCODED_FISH_API_KEY === 'YOUR_ACTUAL_FISH_AUDIO_API_KEY_HERE') {
